@@ -83,9 +83,10 @@ import ItemToolbar from './ItemToolbar.vue'
 import ItemDesc from './ItemDesc.vue'
 import bus, { EVENT_KEY } from '../../utils/bus'
 import { SlideItemPlayStatus } from '@/utils/const_var'
-import { computed, onMounted, onUnmounted, provide, reactive } from 'vue'
+import { computed, onMounted, onUnmounted, provide, reactive, ref } from 'vue'
 import { Icon } from '@iconify/vue'
 import { _css } from '@/utils/dom'
+import Hls from 'hls.js'
 
 defineOptions({
   name: 'BaseVideo'
@@ -144,6 +145,7 @@ provide(
 
 const videoEl = $ref<HTMLVideoElement>()
 const progressEl = $ref<HTMLDivElement>()
+let hls = $ref<Hls>()
 let state = reactive({
   loading: false,
   paused: false,
@@ -194,10 +196,35 @@ onMounted(() => {
   state.height = document.body.clientHeight
   state.width = document.body.clientWidth
   videoEl.currentTime = 0
+
+  // Initialize video source
+  const videoSrc = props.item.video.play_addr.url_list[0]
+
+  // Check if video is HLS format
+  if (videoSrc.includes('.m3u8')) {
+    if (Hls.isSupported()) {
+      hls = new Hls()
+      hls.loadSource(videoSrc)
+      hls.attachMedia(videoEl)
+      hls.on(Hls.Events.MANIFEST_PARSED, () => {
+        if (props.isPlay) {
+          videoEl.play()
+        }
+      })
+    } else if (videoEl.canPlayType('application/vnd.apple.mpegurl')) {
+      // For Safari which has built-in HLS support
+      videoEl.src = videoSrc
+      if (props.isPlay) {
+        videoEl.play()
+      }
+    }
+  }
+
   let fun = (e) => {
     state.currentTime = Math.ceil(e.target.currentTime)
     state.playX = (state.currentTime - 1) * state.step
   }
+
   videoEl.addEventListener('loadedmetadata', () => {
     state.videoScreenHeight = videoEl.videoHeight / (videoEl.videoWidth / state.width)
     state.duration = videoEl.duration
@@ -273,6 +300,9 @@ onUnmounted(() => {
   bus.off(EVENT_KEY.OPEN_SUB_TYPE, onOpenSubType)
   bus.off(EVENT_KEY.CLOSE_SUB_TYPE, onCloseSubType)
   bus.off(EVENT_KEY.REMOVE_MUTED, removeMuted)
+  if (hls) {
+    hls.destroy()
+  }
 })
 
 function removeMuted() {

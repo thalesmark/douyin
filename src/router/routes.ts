@@ -2,6 +2,7 @@ import Home from '../pages/home/index.vue'
 import Test from '../pages/test/Test.vue'
 import Test4 from '../pages/test/Test4.vue'
 import type { RouteRecordRaw } from 'vue-router'
+import Core from '../pages/other/Core.vue'
 
 const routes: RouteRecordRaw[] = [
   // {path: '/', redirect: '/attention'},
@@ -13,6 +14,8 @@ const routes: RouteRecordRaw[] = [
 
   { path: '/home', component: Home },
   { path: '/home/music', component: () => import('@/pages/home/Music.vue') },
+  { path: '/post/:aweme_id', name: "post", component: Core },
+  { path: '/user/:uid', name: "user", component: Core },
   {
     path: '/home/music-rank-list',
     component: () => import('@/pages/home/MusicRankList.vue')
