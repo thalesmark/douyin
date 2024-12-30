@@ -284,7 +284,7 @@ export default {
       this.isCall = false
     },
     async getData() {
-      let res: any = await postComments({id: this.videoId})
+      let res: any = await postComments({aweme_id: this.videoId})
       console.log('res', res)
       if (res.success) {
         res.data.list.map((v) => {

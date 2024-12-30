@@ -1,7 +1,8 @@
 import { request } from '@/utils/request'
 
 export function userinfo(params?: any, data?: any) {
-  return request({ url: '/user/userinfo', method: 'get', params, data })
+  const url = `users/${params.uid}`
+  return request({ url, method: 'get', params, data })
 }
 
 export function userVideoList(params?: any, data?: any) {

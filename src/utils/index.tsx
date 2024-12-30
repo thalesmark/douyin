@@ -46,6 +46,7 @@ export function _copy(val) {
 }
 
 export function _formatNumber(num) {
+  if (num === 0) return 0
   if (!num) return
   if (num > 100000000) {
     return (num / 100000000).toFixed(1) + '亿'

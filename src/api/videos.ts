@@ -37,7 +37,7 @@ export function likePost(params?: any, data?: any) {
 // 评论相关的请求
 export function postComments(params?: any, data?: any) {
   // 动态构建 URL
-  const url = `/posts/${params.id}/comments`
+  const url = `/posts/${params.aweme_id}/comments`
 
   return request({ url, method: 'get', params, data })
 }
@@ -105,12 +105,4 @@ export function passwordLogin(params?: any, data?: any) {
   // 动态构建 URL
   const url = `/login`
   return request({ url, method: 'post', params, data })
-}
-
-
-export function videoComments(params?: any, data?: any) {
-  // 动态构建 URL
-  const url = `posts/${params.id}/comments`
-
-  return request({ url, method: 'get', params, data })
 }
